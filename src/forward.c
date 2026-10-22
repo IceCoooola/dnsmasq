@@ -2438,7 +2438,7 @@ void tcp_request(int confd, time_t now, struct iovec *bigbuff,
 	  
       if (!do_stale)
 	{
-	  if (query_count >= TCP_MAX_QUERIES)
+	  if (query_count >= daemon->tcp_max_queries)
 	    break;
 	  
 	  /* Now get the query into the normal UDP packet buffer.

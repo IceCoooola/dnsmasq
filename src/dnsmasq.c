@@ -2172,8 +2172,8 @@ static void do_tcp_connection(struct listener *listener, time_t now, int slot)
 	
 	  close(confd);
 	  
-	  /* The child can use up to TCP_MAX_QUERIES ids, so skip that many. */
-	  daemon->log_id += TCP_MAX_QUERIES;
+	  /* The child can use up to tcp_max_queries ids, so skip that many. */
+	  daemon->log_id += daemon->tcp_max_queries;
 #ifdef HAVE_DNSSEC
 	  /* It can do more if making DNSSEC queries too. */
 	  if (option_bool(OPT_DNSSEC_VALID))

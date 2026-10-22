@@ -1356,6 +1356,7 @@ extern struct daemon {
 #endif
   int max_procs;
   uint max_procs_used;
+  int tcp_max_queries;
 } *daemon;
 
 struct server_details {

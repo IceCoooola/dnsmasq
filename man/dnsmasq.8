@@ -2336,6 +2336,10 @@ dig +short chaos txt cachesize.bind
 .B --max-tcp-connections=<number>
 The maximum number of concurrent TCP connections. The application forks to
 handle each TCP request. The default maximum is 20.
+.TP
+.B --tcp-max-queries=<number>
+The maximum number of queries answered over a single incoming TCP connection
+before dnsmasq closes it. The default is 100.
 
 .SH CONFIG FILE
 At startup, dnsmasq reads

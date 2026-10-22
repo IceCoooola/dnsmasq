@@ -201,6 +201,7 @@ struct myoption {
 #define LOPT_LEASEQUERY    389
 #define LOPT_SPLIT_RELAY   390
 #define LOPT_LOG_MALLOC    391
+#define LOPT_TCP_MAX_QUERIES 392
 
 #ifdef HAVE_GETOPT_LONG
 static const struct option opts[] =  
@@ -401,6 +402,7 @@ static const struct myoption opts[] =
     { "use-stale-cache", 2, 0 , LOPT_STALE_CACHE },
     { "no-ident", 0, 0, LOPT_NO_IDENT },
     { "max-tcp-connections", 1, 0, LOPT_MAX_PROCS },
+    { "tcp-max-queries", 1, 0, LOPT_TCP_MAX_QUERIES },
     { "leasequery", 2, 0, LOPT_LEASEQUERY },
     { "log-malloc", 0, 0, LOPT_LOG_MALLOC },
     { NULL, 0, 0, 0 }
@@ -611,6 +613,7 @@ static struct {
   { LOPT_NO_IDENT, OPT_NO_IDENT, NULL, gettext_noop("Do not add CHAOS TXT records."), NULL },
   { LOPT_CACHE_RR, ARG_DUP, "<RR-type>", gettext_noop("Cache this DNS resource record type."), NULL },
   { LOPT_MAX_PROCS, ARG_ONE, "<integer>", gettext_noop("Maximum number of concurrent tcp connections."), NULL },
+  { LOPT_TCP_MAX_QUERIES, ARG_ONE, "<integer>", gettext_noop("Maximum number of queries per incoming tcp connection."), NULL },
   { LOPT_LOG_MALLOC, OPT_LOG_MALLOC, NULL, gettext_noop("Log memory allocation for debugging."), NULL },
   { 0, 0, NULL, NULL, NULL }
 }; 
@@ -5457,6 +5460,16 @@ err:
 	break;
       }
 
+    case LOPT_TCP_MAX_QUERIES: /* --tcp-max-queries */
+      {
+	int tcp_max_queries;
+	/* Don't accept numbers less than 1. */
+	if (!atoi_check(arg, &tcp_max_queries) || tcp_max_queries < 1)
+	  ret_err(gen_err);
+	daemon->tcp_max_queries = tcp_max_queries;
+	break;
+      }
+
     default:
       ret_err(_("unsupported option (check that dnsmasq was compiled with DHCP/TFTP/DNSSEC/DBus support)"));
       
@@ -5986,6 +5999,7 @@ void read_opts(int argc, char **argv, char *compile_opts)
   daemon->randport_limit = 1;
   daemon->host_index = SRC_AH;
   daemon->max_procs = MAX_PROCS;
+  daemon->tcp_max_queries = TCP_MAX_QUERIES;
 #ifdef HAVE_DUMPFILE
   daemon->dump_mask = 0xffffffff;
 #endif
